@@ -7,3 +7,5 @@ services:
     tty: true
     volumes:
       - ./:/go/src/forxy
+    ports:
+      - "8080:8080"
