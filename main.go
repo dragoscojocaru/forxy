@@ -85,13 +85,12 @@ type ForxyBodyPayload struct {
 func HTTPRequest(requestMessage RequestMessage, client *http.Client, ch *chan http.Response, wg *sync.WaitGroup) {
 	defer wg.Done()
 	//bodyReader := bytes.NewReader([]byte(requestMessage.Body))
-
+	//TODO implement request body pass
 	req, err1 := http.NewRequest(requestMessage.Method, requestMessage.URL, nil)
-	//req, err1 := http.NewRequest("get", "https://google.com/", nil)
 	resp, err2 := client.Do(req)
+
 	if err1 != nil && err2 != nil {
-		//TODO
-		fmt.Println("error handling")
+		//TODO implement error handling
 		os.Exit(1)
 	}
 
@@ -120,7 +119,6 @@ func TestHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	wg.Wait()
-	fmt.Println(1)
 
 	for idx := 0; idx < len(t.Requests); idx++ {
 		rs := <-responseChannel
