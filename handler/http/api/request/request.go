@@ -9,11 +9,7 @@ type RequestMessage struct {
 	Headers map[string]string
 }
 
-type ResponseMessage struct {
-	Body []json.RawMessage
-}
-
 type ForxyBodyPayload struct {
 	Timeout  int
-	Requests []RequestMessage
+	Requests map[int]RequestMessage
 }

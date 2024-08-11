@@ -2,9 +2,12 @@ package http
 
 import (
 	"encoding/json"
-	"fmt"
-	forxy_http_api_request "github.com/dragoscojocaru/forxy/handler/http/api/request"
+	forxyHttpApiRequest "github.com/dragoscojocaru/forxy/handler/http/api/request"
+	"github.com/dragoscojocaru/forxy/handler/http/api/response"
+	"io"
 	"net/http"
+	"strconv"
+	"strings"
 	"sync"
 )
 
@@ -14,25 +17,46 @@ func HTTPForkHandler(w http.ResponseWriter, r *http.Request) {
 
 	decoder := json.NewDecoder(r.Body)
 
-	var body forxy_http_api_request.ForxyBodyPayload
+	var body forxyHttpApiRequest.ForxyBodyPayload
 	err := decoder.Decode(&body)
 	if err != nil {
 		panic(err)
 	}
 
-	responseChannel := make(chan http.Response, len(body.Requests))
+	responseChannel := make(chan response.ResponseInternalChannel, len(body.Requests))
 
 	var wg sync.WaitGroup
 
 	for idx := range body.Requests {
 		wg.Add(1)
-		go HTTPRequest(body.Requests[idx], client, &responseChannel, &wg)
+		go HTTPRequest(idx, body.Requests[idx], client, &responseChannel, &wg)
 	}
 
 	wg.Wait()
 
-	for idx := 0; idx < len(body.Requests); idx++ {
+	responseMessage := response.NewResponseMessage()
+
+	//TODO implement response stream structure
+	_, err = io.Copy(w, strings.NewReader("{\"responses\": {"))
+	var i = 0
+	for idx := range body.Requests {
+
 		rs := <-responseChannel
-		fmt.Fprintf(w, rs.Status)
+
+		indexReader := strings.NewReader(commaIndex(i) + "\"" + strconv.Itoa(idx) + "\": ")
+		combinedReader := io.MultiReader(indexReader, response.GetResponse(&rs).Body)
+
+		_, err = io.Copy(w, combinedReader)
+
+		response.AddResponse(responseMessage, idx, response.GetResponse(&rs))
+		i++
 	}
+	_, err = io.Copy(w, strings.NewReader("}}"))
+}
+
+func commaIndex(idx int) string {
+	if idx > 0 {
+		return ","
+	}
+	return ""
 }
