@@ -1,4 +1,4 @@
-package main
+package http
 
 import (
 	forxy_http "github.com/dragoscojocaru/forxy/handler/http"
