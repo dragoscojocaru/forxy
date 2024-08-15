@@ -2,22 +2,19 @@ package http
 
 import (
 	"encoding/json"
-	forxyHttpApiRequest "github.com/dragoscojocaru/forxy/handler/http/api/request"
+	ForxyHttpApiRequest "github.com/dragoscojocaru/forxy/handler/http/api/request"
 	"github.com/dragoscojocaru/forxy/handler/http/api/response"
 	"io"
 	"net/http"
 	"strconv"
 	"strings"
-	"sync"
 )
 
-func HTTPForkHandler(w http.ResponseWriter, r *http.Request) {
-
-	client := &http.Client{}
+func ForkHandler(w http.ResponseWriter, r *http.Request) {
 
 	decoder := json.NewDecoder(r.Body)
 
-	var body forxyHttpApiRequest.ForxyBodyPayload
+	var body ForxyHttpApiRequest.ForxyBodyPayload
 	err := decoder.Decode(&body)
 	if err != nil {
 		panic(err)
@@ -25,14 +22,7 @@ func HTTPForkHandler(w http.ResponseWriter, r *http.Request) {
 
 	responseChannel := make(chan response.ResponseInternalChannel, len(body.Requests))
 
-	var wg sync.WaitGroup
-
-	for idx := range body.Requests {
-		wg.Add(1)
-		go HTTPRequest(idx, body.Requests[idx], client, &responseChannel, &wg)
-	}
-
-	wg.Wait()
+	SendStream(&responseChannel, body)
 
 	responseMessage := response.NewResponseMessage()
 
