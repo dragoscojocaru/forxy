@@ -4,10 +4,7 @@ import (
 	"encoding/json"
 	ForxyHttpApiRequest "github.com/dragoscojocaru/forxy/handler/http/api/request"
 	"github.com/dragoscojocaru/forxy/handler/http/api/response"
-	"io"
 	"net/http"
-	"strconv"
-	"strings"
 )
 
 func ForkHandler(w http.ResponseWriter, r *http.Request) {
@@ -24,29 +21,15 @@ func ForkHandler(w http.ResponseWriter, r *http.Request) {
 
 	SendStream(&responseChannel, body)
 
-	responseMessage := response.NewResponseMessage()
-
-	//TODO implement response stream structure
-	_, err = io.Copy(w, strings.NewReader("{\"responses\": {"))
-	var i = 0
+	forxyResponsePayload := response.NewForxyResponsePayload()
 	for idx := range body.Requests {
 
 		rs := <-responseChannel
+		res := response.GetResponse(&rs)
 
-		indexReader := strings.NewReader(commaIndex(i) + "\"" + strconv.Itoa(idx) + "\": ")
-		combinedReader := io.MultiReader(indexReader, response.GetResponse(&rs).Body)
+		forxyResponsePayload.AddResponse(idx, res)
 
-		_, err = io.Copy(w, combinedReader)
-
-		response.AddResponse(responseMessage, idx, response.GetResponse(&rs))
-		i++
 	}
-	_, err = io.Copy(w, strings.NewReader("}}"))
-}
-
-func commaIndex(idx int) string {
-	if idx > 0 {
-		return ","
-	}
-	return ""
+	forxyPayloadWriter := response.NewForxyPayloadWriter()
+	forxyPayloadWriter.JsonMarshal(w, *forxyResponsePayload)
 }

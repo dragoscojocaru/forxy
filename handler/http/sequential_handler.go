@@ -12,8 +12,8 @@ func HTTPSequentialHandler(w http.ResponseWriter, _ *http.Request) {
 
 	start := time.Now()
 
-	for range 3 {
-		req, err1 := http.NewRequest("GET", "https://google.com/", nil)
+	for range 6 {
+		req, err1 := http.NewRequest("GET", "https://google.com", nil)
 		resp, err2 := client.Do(req)
 		if err1 == nil && err2 == nil {
 			fmt.Fprintf(w, resp.Status)

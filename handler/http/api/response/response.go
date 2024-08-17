@@ -1,37 +1,58 @@
 package response
 
 import (
+	"encoding/json"
+	"fmt"
+	"github.com/dragoscojocaru/forxy/logger"
 	"io"
+	"log"
 	"net/http"
-	"strconv"
-	"strings"
 )
 
-type ResponseMessage struct {
-	Body map[int]io.ReadCloser
+type ForxyResponsePayload struct {
+	Responses map[int]json.RawMessage `json:"responses"`
 }
 
-func NewResponseMessage() *ResponseMessage {
-
-	body := make(map[int]io.ReadCloser)
-	rm := new(ResponseMessage)
-	rm.Body = body
-
-	return rm
+type ForxyResponsePayloadWriter struct {
+	http.ResponseWriter
 }
 
-func AddResponse(responseMessage *ResponseMessage, idx int, response *http.Response) {
-	responseMessage.Body[idx] = response.Body
-}
-
-func GetResponseStream(message *ResponseMessage) *[]io.Reader {
-	var stream []io.Reader
-	for idx := range message.Body {
-		stream = append(stream, strings.NewReader(strconv.Itoa(idx)+": "))
-		stream = append(stream, message.Body[idx])
+func NewForxyResponsePayload() *ForxyResponsePayload {
+	responses := make(map[int]json.RawMessage)
+	forxyResponsePayload := ForxyResponsePayload{
+		Responses: responses,
 	}
 
-	return &stream
+	fmt.Println(forxyResponsePayload)
+
+	return &forxyResponsePayload
+}
+
+func (forxyResponsePayload *ForxyResponsePayload) AddResponse(idx int, response http.Response) {
+
+	bodyBytes, err := io.ReadAll(response.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	forxyResponsePayload.Responses[idx] = bodyBytes
+}
+
+func NewForxyPayloadWriter() *ForxyResponsePayloadWriter {
+	return new(ForxyResponsePayloadWriter)
+}
+
+func (ForxyResponsePayloadWriter) JsonMarshal(w http.ResponseWriter, payload ForxyResponsePayload) {
+
+	bytes, err := json.Marshal(payload)
+	if err != nil {
+		logger.FileErrorLog(err)
+	}
+	in, err := w.Write(bytes)
+	fmt.Println(in)
+	if err != nil {
+		logger.FileErrorLog(err)
+	}
+
 }
 
 type ResponseInternalChannel struct {
@@ -52,6 +73,6 @@ func GetIdx(responseInternalChannel *ResponseInternalChannel) int {
 	return responseInternalChannel.idx
 }
 
-func GetResponse(responseInternalChannel *ResponseInternalChannel) *http.Response {
-	return &responseInternalChannel.response
+func GetResponse(responseInternalChannel *ResponseInternalChannel) http.Response {
+	return responseInternalChannel.response
 }
