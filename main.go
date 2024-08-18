@@ -1,9 +1,7 @@
 package main
 
 import (
-	ForxyHttp "github.com/dragoscojocaru/forxy/handler/http"
-	"log"
-	"net/http"
+	HttpServer "github.com/dragoscojocaru/forxy/server/http"
 )
 
 func main() {
@@ -14,9 +12,7 @@ func main() {
 	//	ForxyLogger.FileErrorLog(err)
 	//}
 
-	http.HandleFunc("/http/sequential", ForxyHttp.HTTPSequentialHandler)
-	http.HandleFunc("/http/fork", ForxyHttp.ForkHandler)
+	server := HttpServer.Server{}
+	server.Serve(8080)
 
-	log.Println("Listening...")
-	log.Fatal(http.ListenAndServe(":8080", nil))
 }

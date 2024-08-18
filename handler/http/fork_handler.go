@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	ForxyHttpApiRequest "github.com/dragoscojocaru/forxy/handler/http/api/request"
 	"github.com/dragoscojocaru/forxy/handler/http/api/response"
+	"github.com/dragoscojocaru/forxy/logger"
 	"net/http"
 )
 
@@ -14,20 +15,20 @@ func ForkHandler(w http.ResponseWriter, r *http.Request) {
 	var body ForxyHttpApiRequest.ForxyBodyPayload
 	err := decoder.Decode(&body)
 	if err != nil {
-		panic(err)
+		go logger.FileErrorLog(err)
 	}
 
-	responseChannel := make(chan response.ResponseInternalChannel, len(body.Requests))
+	responseChannel := make(chan response.ChannelMessage, len(body.Requests))
 
 	SendStream(&responseChannel, body)
 
 	forxyResponsePayload := response.NewForxyResponsePayload()
-	for idx := range body.Requests {
+	for _ = range body.Requests {
 
 		rs := <-responseChannel
 		res := response.GetResponse(&rs)
 
-		forxyResponsePayload.AddResponse(idx, res)
+		forxyResponsePayload.AddResponse(response.GetIdx(&rs), res)
 
 	}
 	forxyPayloadWriter := response.NewForxyPayloadWriter()
