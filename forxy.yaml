@@ -1,0 +1,12 @@
+server:
+  bind_port: 8080
+log:
+  path: "testLogconf.text"
+request:
+  cache_tcp: true
+  cookie_jar:
+    - "cookie1"
+    - "cookie2"
+response:
+  validators:
+    - "content-type validator"

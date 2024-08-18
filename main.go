@@ -1,6 +1,7 @@
 package main
 
 import (
+	ConfigPkg "github.com/dragoscojocaru/forxy/config"
 	HttpServer "github.com/dragoscojocaru/forxy/server/http"
 )
 
@@ -13,6 +14,6 @@ func main() {
 	//}
 
 	server := HttpServer.Server{}
-	server.Serve(8080)
+	server.Serve(ConfigPkg.Configuration.Server.BindPort)
 
 }
