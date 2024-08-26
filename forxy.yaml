@@ -1,7 +1,7 @@
 server:
   bind_port: 8080
 log:
-  path: "testLogconf.text"
+  path: "/go/src/forxy/testLogconf.text"
 request:
   cache_tcp: true
   cookie_jar:

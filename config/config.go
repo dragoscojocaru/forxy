@@ -4,6 +4,7 @@ import (
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"log"
+	"os"
 )
 
 type Config struct {
@@ -24,7 +25,11 @@ type Config struct {
 
 func InitConfig() *Config {
 
-	yfile, err := ioutil.ReadFile("forxy.yaml")
+	config_path := "/go/src/forxy/forxy.yaml"
+	if os.Getenv("FORXY_CONFIG_PATH") != "" {
+		config_path = os.Getenv("FORXY_CONFIG_PATH")
+	}
+	yfile, err := ioutil.ReadFile(config_path)
 
 	if err != nil {
 		log.Fatal(err)

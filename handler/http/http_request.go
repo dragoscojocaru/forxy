@@ -21,7 +21,12 @@ func HTTPRequest(idx int, requestMessage ForxyHttpApiRequest.RequestMessage, ch 
 		req.Header.Set(key, value)
 	}
 
-	client := connectionPool.GetServerConnection(GetHost(requestMessage.URL))
+	host, err := GetHost(requestMessage.URL)
+	if err != nil {
+		logger.FileErrorLog(err)
+	}
+
+	client := connectionPool.GetServerConnection(host)
 	resp, err2 := client.Do(req)
 
 	if err1 != nil && err2 != nil {
@@ -44,10 +49,11 @@ func SendStream(ch *chan response.ChannelMessage, body ForxyHttpApiRequest.Forxy
 	wg.Wait()
 }
 
-func GetHost(link string) string {
+func GetHost(link string) (string, error) {
 	urlS, err := url.Parse(link)
 	if err != nil {
 		go logger.FileErrorLog(err)
+		return "", err
 	}
-	return urlS.Hostname()
+	return urlS.Hostname(), nil
 }
