@@ -14,4 +14,5 @@ func FileErrorLog(err error) {
 	defer f.Close()
 
 	log.SetOutput(f)
+	log.Println(err)
 }

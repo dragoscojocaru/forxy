@@ -1,9 +1,10 @@
 version: "3.4"
 
+# development docker-compose file. Check out the Docker section in the documentation for production usage.
 services:
-  forxy:
+  forxy-dev:
     image: golang:1.22-alpine3.20
-    container_name: forxy
+    container_name: forxy-dev
     tty: true
     volumes:
       - ./:/go/src/forxy

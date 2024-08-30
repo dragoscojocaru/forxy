@@ -1,27 +1,55 @@
 package http
 
 import (
-	"fmt"
+	"bytes"
+	"encoding/json"
+	ForxyHttpApiRequest "github.com/dragoscojocaru/forxy/handler/http/api/request"
+	"github.com/dragoscojocaru/forxy/handler/http/api/response"
+	"github.com/dragoscojocaru/forxy/logger"
 	"net/http"
-	"time"
 )
 
-func HTTPSequentialHandler(w http.ResponseWriter, _ *http.Request) {
+// HTTPSequentialHandler used for testing purposes
+func HTTPSequentialHandler(w http.ResponseWriter, r *http.Request) {
 
-	client := &http.Client{}
+	decoder := json.NewDecoder(r.Body)
 
-	start := time.Now()
-
-	for range 5 {
-		req, err1 := http.NewRequest("GET", "https://catalog.dedeman.ro/api/live/list", nil)
-		resp, err2 := client.Do(req)
-		if err1 == nil && err2 == nil {
-			fmt.Fprintf(w, resp.Status)
-		} else {
-			fmt.Fprintf(w, err2.Error())
-		}
+	var body ForxyHttpApiRequest.ForxyBodyPayload
+	err := decoder.Decode(&body)
+	if err != nil {
+		go logger.FileErrorLog(err)
 	}
 
-	fmt.Println("Execution time on sequential: ", time.Since(start))
+	forxyResponsePayload := response.NewForxyResponsePayload()
+	for idx := range body.Requests {
+
+		bodyReader := bytes.NewReader(body.Requests[idx].Body)
+
+		req, err1 := http.NewRequest(body.Requests[idx].Method, body.Requests[idx].URL, bodyReader)
+		if err1 != nil {
+			logger.FileErrorLog(err1)
+		}
+
+		for key, value := range body.Requests[idx].Headers {
+			req.Header.Set(key, value)
+		}
+
+		host, err := GetHost(body.Requests[idx].URL)
+		if err != nil {
+			logger.FileErrorLog(err)
+		}
+
+		client := connectionPool.GetServerConnection(host)
+		resp, err2 := client.Do(req)
+
+		if err2 != nil {
+			logger.FileErrorLog(err2)
+		}
+
+		forxyResponsePayload.AddResponse(idx, *resp)
+
+	}
+	forxyPayloadWriter := response.NewForxyPayloadWriter()
+	forxyPayloadWriter.JsonMarshal(w, *forxyResponsePayload)
 
 }

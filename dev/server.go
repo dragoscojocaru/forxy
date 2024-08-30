@@ -1,17 +1,19 @@
 package main
 
+import "net/http"
+
 import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
-	"net/http"
 )
 
 type test_struct struct {
 	Test string
 }
 
+// file used for development purposes
 func test(rw http.ResponseWriter, req *http.Request) {
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
