@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"log"
@@ -9,14 +10,14 @@ import (
 
 type Config struct {
 	Server struct {
-		BindPort int
+		Bind_Port int32
 	}
 	Log struct {
 		Path string
 	}
 	Request struct {
-		CacheTcp  bool
-		CookieJar []string
+		Cache_Http bool
+		Cookie_Jar []string
 	}
 	Response struct {
 		Validators []string
@@ -25,17 +26,17 @@ type Config struct {
 
 func InitConfig() *Config {
 
-	config_path := "/go/src/forxy/forxy.yaml"
+	configPath := "/go/src/forxy/"
 	if os.Getenv("FORXY_CONFIG_PATH") != "" {
-		config_path = os.Getenv("FORXY_CONFIG_PATH")
+		configPath = os.Getenv("FORXY_CONFIG_PATH")
 	}
-	yfile, err := ioutil.ReadFile(config_path)
+	yfile, err := ioutil.ReadFile(configPath + "forxy.yaml")
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	config := new(Config)
+	var config Config
 
 	err2 := yaml.Unmarshal(yfile, &config)
 
@@ -43,7 +44,8 @@ func InitConfig() *Config {
 		log.Fatal(err2)
 	}
 
-	return config
+	fmt.Println(config.Response.Validators)
+	return &config
 }
 
 var Configuration = InitConfig()

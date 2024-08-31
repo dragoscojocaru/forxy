@@ -1,19 +1,21 @@
 package http
 
 import (
+	"fmt"
 	ForxyHttp "github.com/dragoscojocaru/forxy/handler/http"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 type Server struct{}
 
-func (server *Server) Serve(bindPort int) {
+func (server *Server) Serve(bindPort int32) {
 
 	http.HandleFunc("/http/sequential", ForxyHttp.HTTPSequentialHandler)
 	http.HandleFunc("/http/fork", ForxyHttp.ForkHandler)
 
-	log.Println("Forxy HTTP server listening for connections on port " + strconv.Itoa(bindPort) + " ...")
-	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(bindPort), nil))
+	port := fmt.Sprint(bindPort)
+
+	log.Println("Forxy HTTP server listening for connections on port " + port + " ...")
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }

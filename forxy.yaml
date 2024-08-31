@@ -3,7 +3,7 @@ server:
 log:
   path: "/go/src/forxy/testLogconf.text"
 request:
-  cache_tcp: true
+  cache_http: true
   cookie_jar:
     - "cookie1"
     - "cookie2"

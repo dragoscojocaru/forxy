@@ -51,5 +51,4 @@ func HTTPSequentialHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	forxyPayloadWriter := response.NewForxyPayloadWriter()
 	forxyPayloadWriter.JsonMarshal(w, *forxyResponsePayload)
-
 }

@@ -10,6 +10,6 @@ func main() {
 	//TODO implement file error handling trough the project
 
 	server := HttpServer.Server{}
-	server.Serve(ConfigPkg.Configuration.Server.BindPort)
+	server.Serve(ConfigPkg.Configuration.Server.Bind_Port)
 
 }
