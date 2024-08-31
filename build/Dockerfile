@@ -1,3 +1,4 @@
+# base image for dragoscojocaru/forxy
 FROM golang:1.22-alpine3.20 AS build
 
 WORKDIR /go/src/forxy

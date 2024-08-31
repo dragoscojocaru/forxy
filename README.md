@@ -34,7 +34,7 @@ Forxy is a fast HTTP proxy aggregator that forks the requests. It's main purpose
         volumes:
           - ./forxy.yaml:/etc/forxy/forxy.yaml
         expose:
-          - 8080
+          - 80
 
 
 ## 2.2 Building the binary
@@ -46,7 +46,7 @@ Forxy is a fast HTTP proxy aggregator that forks the requests. It's main purpose
   <li> <i>bind port (integer)</i>: binding port for the forxy http server.
 
     server:
-      bind_port: 8080
+      bind_port: 80
 
 ### log
   The **log** config contains the following options:
@@ -58,13 +58,9 @@ Forxy is a fast HTTP proxy aggregator that forks the requests. It's main purpose
 ### request
   The **request** config contains the following options:
   <li> <i>cache_http (boolean)</i>: Use dedicated http(s) connections for each target. This can option improve performance when the expected requests follow the same targets. It can also leverage the cookie_jar option.
-  <li> <i>cookie_jar (array[string])</i>: Authorization tokens that simplify communications. The cached http(s) clients are initialized with the tokens provided so authorization must not be passed for requests. When not specified, each authorization should be passed as a request header.
 
     request:
       cache_http: true
-      cookie_jar:
-        - "cookie1"
-        - "cookie2"
 
 ### response
   The **response** config contains the following options:

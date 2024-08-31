@@ -1,12 +1,9 @@
 server:
   bind_port: 8080
 log:
-  path: "/go/src/forxy/testLogconf.text"
+  path: "/var/log/forxy/error.log"
 request:
   cache_http: true
-  cookie_jar:
-    - "cookie1"
-    - "cookie2"
 response:
   validators:
     - "content-type validator"
