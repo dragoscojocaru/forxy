@@ -26,7 +26,7 @@ type Config struct {
 
 func InitConfig() *Config {
 
-	configPath := "/go/src/forxy/"
+	configPath := "/etc/forxy/"
 	if os.Getenv("FORXY_CONFIG_PATH") != "" {
 		configPath = os.Getenv("FORXY_CONFIG_PATH")
 	}

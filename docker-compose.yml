@@ -5,6 +5,8 @@ services:
   forxy-dev:
     image: golang:1.22-alpine3.20
     container_name: forxy-dev
+    environment:
+      - FORXY_CONFIG_PATH=/go/src/forxy/
     tty: true
     volumes:
       - ./:/go/src/forxy
