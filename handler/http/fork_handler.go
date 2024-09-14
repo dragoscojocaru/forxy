@@ -5,18 +5,19 @@ import (
 	ForxyHttpApiRequest "github.com/dragoscojocaru/forxy/handler/http/api/request"
 	"github.com/dragoscojocaru/forxy/handler/http/api/response"
 	"github.com/dragoscojocaru/forxy/logger"
+	"io/ioutil"
 	"net/http"
 )
 
 func ForkHandler(w http.ResponseWriter, r *http.Request) {
 
-	decoder := json.NewDecoder(r.Body)
+	bodyBytes, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		logger.FileErrorLog(err)
+	}
 
 	var body ForxyHttpApiRequest.ForxyBodyPayload
-	err := decoder.Decode(&body)
-	if err != nil {
-		go logger.FileErrorLog(err)
-	}
+	err = json.Unmarshal(bodyBytes, &body)
 
 	responseChannel := make(chan response.ChannelMessage, len(body.Requests))
 

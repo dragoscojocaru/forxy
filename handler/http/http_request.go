@@ -2,6 +2,7 @@ package http
 
 import (
 	"bytes"
+	"encoding/json"
 	ForxyHttpApiRequest "github.com/dragoscojocaru/forxy/handler/http/api/request"
 	"github.com/dragoscojocaru/forxy/handler/http/api/response"
 	"github.com/dragoscojocaru/forxy/logger"
@@ -13,10 +14,15 @@ import (
 func HTTPRequest(idx int, requestMessage ForxyHttpApiRequest.RequestMessage, ch *chan response.ChannelMessage, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	bodyReader := bytes.NewReader(requestMessage.Body)
+	var buf bytes.Buffer
+	json.NewEncoder(&buf).Encode(requestMessage.Body)
 
-	req, err1 := http.NewRequest(requestMessage.Method, requestMessage.URL, bodyReader)
+	req, err1 := http.NewRequest(requestMessage.Method, requestMessage.URL, &buf)
+	if err1 != nil {
+		logger.FileErrorLog(err1)
+	}
 
+	req.Header.Set("Content-Type", "application/json")
 	for key, value := range requestMessage.Headers {
 		req.Header.Set(key, value)
 	}
