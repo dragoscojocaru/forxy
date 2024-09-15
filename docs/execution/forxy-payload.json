@@ -1,0 +1,30 @@
+{
+    "timeout": 400,
+    "requests":
+    {
+        "1":{
+            "url": "https://integration-1.forxy.dev/",
+            "method": "GET",
+            "body": {
+                "count": 2,
+                "category": "Time"
+            }
+        },
+        "2":{
+            "url": "https://integration-1.forxy.dev/",
+            "method": "GET",
+            "body": {
+                "count": 1,
+                "category": "Time"
+            }
+        },
+        "3":{
+            "url": "https://integration-2.forxy.dev/",
+            "method": "GET",
+            "body": {
+                "count": 1,
+                "category": "Comedy"
+            }
+        }
+    }
+}
