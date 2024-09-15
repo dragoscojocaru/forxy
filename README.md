@@ -107,23 +107,23 @@ This is the route that forks your requests into the distributed world 🙂. To m
       }
     }
 
-*timeout (integer)* - applied as a global timeout in miliseconds for the target requests.
+<li><i>timeout (integer)</i> - applied as a global timeout in miliseconds for the target requests;
 
 <br>
 
-*requests (object)* - json object containing the target request index as *key(string)* & target request data as *value(object)*
+<li><i>requests (object)</i> - json object containing the target request index as <i>key(string)</i> & target request data as <i>value(object)</i>;
 
 <br>
 
-*target request* - object containg data for the target http request. 
+<li><i>target request</i> - object containg data for the target http request;
 
-*url (string)* - target url
+<li><i>url (string)</i> - target url;
 
-*method (string)* - target HTTP method
+<li><i>method (string)</i> - target HTTP method;
 
-*headers (object), optional* - target http headers object containg multiple *key(string)*-*value(string)* pairs. 
+<li><i>headers (object), optional</i> - target http headers object containg multiple <i>key(string)</i>-<i>value(string)</i> pairs.;
 
-*body (object), optional* - target HTTP request body.
+<li><i>body (object), optional</i> - target HTTP request body;
 
 <br>
 
@@ -202,23 +202,23 @@ This is the route that forks your requests into the distributed world 🙂. To m
 
 <br>
 
-*responses (object)*: contains multiple pairs of target request index *key(str)* & target response data *value(object)*;
+<li><i>responses (object)</i>: contains multiple pairs of target request index *key(str)* & target response data *value(object)*;
 
 <br>
 
-*forxy_control (object)*: object used for error handling inside the forxy environment;
+<li><i>forxy_control (object)</i>: object used for error handling inside the forxy environment;
 
-*ok (boolean)*: success status of the target request execution;
+<li><i>ok (boolean)</i>: success status of the target request execution;
 
-*message (string)*: satus message the target request execution;
-
-<br>
-
-*status (integer)* - target HTTP response status code;
+<li><i>message (string)</i>: satus message the target request execution;
 
 <br>
 
-*body (object)* - target HTTP response body;
+<li><i>status (integer)</i> - target HTTP response status code;
+
+<br>
+
+<li><i>body (object)</i> - target HTTP response body;
 
 <br>
 <br>
