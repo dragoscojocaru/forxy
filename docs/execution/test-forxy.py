@@ -4,7 +4,7 @@ import time
 with open("forxy-payload.json", 'r') as file:
     payload = file.read()
 
-url = "http://localhost:8080/http/fork"
+url = "http://localhost:1480/http/fork"
 
 start = time.time()
 

@@ -2,7 +2,7 @@
 
 $payload = file_get_contents("forxy-payload.json");
 
-$url = "http://localhost:8080/http/fork";
+$url = "http://localhost:1480/http/fork";
 
 $ch = curl_init($url);
 
