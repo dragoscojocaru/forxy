@@ -204,7 +204,7 @@ This is the route that forks your requests into the distributed world 🙂. To m
 
 <br>
 
-<li><i>responses (object)</i>: contains multiple pairs of target request index *key(str)* & target response data *value(object)*;
+<li><i>responses (object)</i>: contains multiple pairs of target request index <i>key(str)</i> & target response data <i>value(object)</i>;
 
 <br>
 
