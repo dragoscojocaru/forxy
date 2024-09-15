@@ -10,7 +10,7 @@ RUN go build ./cmd/forxy.go
 
 FROM alpine:3.20
 
-ENV FORXY_CONFIG_PATH=/etc/forxy/forxy.yaml
+ENV FORXY_CONFIG_PATH=/etc/forxy/
 
 RUN mkdir -p "/var/log/forxy/"
 
