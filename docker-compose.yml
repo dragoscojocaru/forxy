@@ -11,5 +11,5 @@ services:
     volumes:
       - ./:/go/src/forxy
     ports:
-      - "8080:8080"
+      - "1480:1480"
       - "8081:8081"
