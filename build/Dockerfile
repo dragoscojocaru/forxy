@@ -5,7 +5,8 @@ WORKDIR /go/src/forxy
 
 COPY . /go/src/forxy
 
-RUN go mod download && go build
+RUN go mod download
+RUN go build ./cmd/forxy.go
 
 FROM alpine:3.20
 

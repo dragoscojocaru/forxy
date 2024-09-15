@@ -1,7 +1,7 @@
 package logger
 
 import (
-	ConfigPkg "github.com/dragoscojocaru/forxy/config"
+	ConfigPkg "github.com/dragoscojocaru/forxy/pkg/config"
 	"log"
 	"os"
 )

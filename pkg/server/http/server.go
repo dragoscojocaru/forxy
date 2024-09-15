@@ -2,7 +2,7 @@ package http
 
 import (
 	"fmt"
-	ForxyHttp "github.com/dragoscojocaru/forxy/handler/http"
+	ForxyHttp "github.com/dragoscojocaru/forxy/pkg/handler/http"
 	"log"
 	"net/http"
 )

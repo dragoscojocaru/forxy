@@ -2,9 +2,9 @@ package http
 
 import (
 	"encoding/json"
-	ForxyHttpApiRequest "github.com/dragoscojocaru/forxy/handler/http/api/request"
-	"github.com/dragoscojocaru/forxy/handler/http/api/response"
-	"github.com/dragoscojocaru/forxy/logger"
+	ForxyHttpApiRequest "github.com/dragoscojocaru/forxy/pkg/handler/http/api/request"
+	"github.com/dragoscojocaru/forxy/pkg/handler/http/api/response"
+	"github.com/dragoscojocaru/forxy/pkg/logger"
 	"io/ioutil"
 	"net/http"
 )

@@ -2,8 +2,8 @@ package response
 
 import (
 	"encoding/json"
-	"github.com/dragoscojocaru/forxy/handler/http/api"
-	"github.com/dragoscojocaru/forxy/logger"
+	"github.com/dragoscojocaru/forxy/pkg/handler/http/api"
+	"github.com/dragoscojocaru/forxy/pkg/logger"
 	"io"
 	"net/http"
 )
