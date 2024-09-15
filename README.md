@@ -10,10 +10,11 @@ Forxy is a fast HTTP proxy aggregator that forks the requests. It's main purpose
   - [2.3 Configuration file](#23-configuration-file)
     - [server](#server)
     - [log](#log)
-    - [request](#request)
-    - [response](#response)
-- [3. Known limitations](#3-known-limitations)
-- [4. Contributing](#4-contributing)
+- [3. Developer guide](#3-developer-guide)
+  - [Routes](#routes)
+    - [ /http/fork](#-httpfork)
+    - [ /http/sequential](#-httpsequential)
+- [4. Known limitations](#4-known-limitations)
 
 # 1. How to use it
   Forxy is designed to be a client side proxy, routing traffic parallely from the local network to the distributed world. It can sit on top of your microservices as well, with respect to network latency.
@@ -33,12 +34,14 @@ Forxy is a fast HTTP proxy aggregator that forks the requests. It's main purpose
         container_name: forxy
         volumes:
           - ./forxy.yaml:/etc/forxy/forxy.yaml
-        expose:
-          - 80
+        ports:
+          - "1480:1480"
 
 
 ## 2.2 Building the binary
   Build your own binary from the source code running **go build** in the project root. The current version is **go 1.22.5**.
+
+  *! the docker image already contains the binary, manual build is not needed*
 ## 2.3 Configuration file
   The configuration file is named **forxy.yaml** and by default it is located in /etc/froxy/ path. The path can be changed using the FORXY_CONFIG_PATH environment variable.
 ### server
@@ -46,7 +49,7 @@ Forxy is a fast HTTP proxy aggregator that forks the requests. It's main purpose
   <li> <i>bind port (integer)</i>: binding port for the forxy http server.
 
     server:
-      bind_port: 80
+      bind_port: 1480
 
 ### log
   The **log** config contains the following options:
@@ -55,26 +58,180 @@ Forxy is a fast HTTP proxy aggregator that forks the requests. It's main purpose
     log:
       path: "/var/log/forxy/error.log"
 
-### request
-  The **request** config contains the following options:
-  <li> <i>cache_http (boolean)</i>: Use dedicated http(s) connections for each target. This can option improve performance when the expected requests follow the same targets. It can also leverage the cookie_jar option.
+<br>
 
-    request:
-      cache_http: true
+# 3. Developer guide
+Forxy exposes a HTTP server for communication.
 
-### response
-  The **response** config contains the following options:
-  <li> <i>validators (array[string])</i>: string array containg name of the validators used in the response construct. The validators are run agains the target responses. Currently supported validators are:
+## Routes
 
-  *"content-type validator"* - checks the target response against the Content-Type header. Forxy currently only supports "application/json" target responses, not including this validator will result in errors for other Content-Types.
+### <li> <b>/http/fork<b> 
 
-    response:
-      validators:
-        - "content-type validator"
+This is the route that forks your requests into the distributed world 🙂. To make sure both stability and functionality are maintained, this route uses a dedicated request payload:
 
 <br>
 
-# 3. Known limitations
-  Forxy supports for now only HTTPS(S) application/json communication.
+**request payload:**
 
-# 4. Contributing
+    {
+      "timeout": 400,
+      "requests":
+      {
+          "1":{
+              "url": "https://integration-1.forxy.dev/",
+              "method": "GET",
+              "headers": {
+                "key1": "value1"
+              },
+              "body": {
+                  "count": 2,
+                  "category": "Time"
+              }
+          },
+          "2":{
+              "url": "https://integration-2.forxy.dev/",
+              "method": "GET",
+              "body": {
+                  "count": 1,
+                  "category": "Comedy"
+              }
+          },
+          "3":{
+              "url": "https://integration-1.forxy.dev/",
+              "method": "GET",
+              "body": {
+                  "count": 1,
+                  "category": "Time"
+              }
+          }
+      }
+    }
+
+*timeout (integer)* - applied as a global timeout in miliseconds for the target requests.
+
+<br>
+
+*requests (object)* - json object containing the target request index as *key(string)* & target request data as *value(object)*
+
+<br>
+
+*target request* - object containg data for the target http request. 
+
+*url (string)* - target url
+
+*method (string)* - target HTTP method
+
+*headers (object), optional* - target http headers object containg multiple *key(string)*-*value(string)* pairs. 
+
+*body (object), optional* - target HTTP request body.
+
+<br>
+
+**response payload:**
+
+    {
+      "responses": {
+          "1": {
+              "forxy_control": {
+                  "ok": true,
+                  "message": "Forxy pass OK."
+              },
+              "status": 200,
+              "body": {
+                  "count": 2,
+                  "quotes": [
+                      {
+                          "category": "Time",
+                          "quote": {
+                              "quote": "Lost time is never found again.",
+                              "author": "Benjamin Franklin"
+                          }
+                      },
+                      {
+                          "category": "Time",
+                          "quote": {
+                              "quote": "The two most powerful warriors are patience and time.",
+                              "author": "Leo Tolstoy"
+                          }
+                      }
+                  ]
+              }
+          },
+          "2": {
+              "forxy_control": {
+                  "ok": true,
+                  "message": "Forxy pass OK."
+              },
+              "status": 200,
+              "body": {
+                  "count": 1,
+                  "movies": [
+                      {
+                          "category": "Comedy",
+                          "movie": {
+                              "name": "Groundhog Day",
+                              "release_year": 1993,
+                              "description": "A weatherman finds himself living the same day over and over again, forcing him to reevaluate his life and actions."
+                          }
+                      }
+                  ]
+              }
+          },
+          "3": {
+              "forxy_control": {
+                  "ok": true,
+                  "message": "Forxy pass OK."
+              },
+              "status": 200,
+              "body": {
+                  "count": 1,
+                  "quotes": [
+                      {
+                          "category": "Time",
+                          "quote": {
+                              "quote": "Time is what we want most, but what we use worst.",
+                              "author": "William Penn"
+                          }
+                      }
+                  ]
+              }
+          }
+      }
+    }
+
+
+<br>
+
+*responses (object)*: contains multiple pairs of target request index *key(str)* & target response data *value(object)*;
+
+<br>
+
+*forxy_control (object)*: object used for error handling inside the forxy environment;
+
+*ok (boolean)*: success status of the target request execution;
+
+*message (string)*: satus message the target request execution;
+
+<br>
+
+*status (integer)* - target HTTP response status code;
+
+<br>
+
+*body (object)* - target HTTP response body;
+
+<br>
+<br>
+
+*! Forxy only supports application/json communication for now. request and response headers are passed automatically by the application, so manual handling is not necessary.*
+
+
+### <li> <b>/http/sequential<b> 
+
+
+Route used for testing and development purposes. It uses the same request payload as the forxy route, but executes the target http requests sequentially.
+
+<br>
+
+# 4. Known limitations
+  Forxy supports for now only HTTPS(S) application/json communication.
