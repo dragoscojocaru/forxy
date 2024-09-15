@@ -11,6 +11,8 @@ import (
 
 func ForkHandler(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("Content-Type", "application/json")
+
 	bodyBytes, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		logger.FileErrorLog(err)

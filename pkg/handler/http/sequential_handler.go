@@ -12,6 +12,8 @@ import (
 // HTTPSequentialHandler used for testing purposes
 func HTTPSequentialHandler(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("Content-Type", "application/json")
+
 	decoder := json.NewDecoder(r.Body)
 
 	var body ForxyHttpApiRequest.ForxyBodyPayload
