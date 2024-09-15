@@ -12,6 +12,8 @@ FROM alpine:3.20
 
 ENV FORXY_CONFIG_PATH=/etc/forxy/forxy.yaml
 
+RUN mkdir -p "/var/log/forxy/"
+
 COPY --from=build /go/src/forxy/forxy /etc/forxy/forxy
 COPY --from=build /go/src/forxy/forxy.yaml /etc/forxy/forxy.yaml
 
