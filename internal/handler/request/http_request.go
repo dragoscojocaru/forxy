@@ -1,11 +1,12 @@
-package http
+package request
 
 import (
 	"bytes"
 	"encoding/json"
-	ForxyHttpApiRequest "github.com/dragoscojocaru/forxy/pkg/handler/http/api/request"
-	"github.com/dragoscojocaru/forxy/pkg/handler/http/api/response"
-	"github.com/dragoscojocaru/forxy/pkg/logger"
+	ForxyHttpApiRequest "github.com/dragoscojocaru/forxy/internal/handler/api/request"
+	"github.com/dragoscojocaru/forxy/internal/handler/api/response"
+	"github.com/dragoscojocaru/forxy/internal/handler/connection"
+	"github.com/dragoscojocaru/forxy/internal/logger"
 	"net/http"
 	"net/url"
 	"sync"
@@ -32,6 +33,7 @@ func HTTPRequest(idx int, requestMessage ForxyHttpApiRequest.RequestMessage, ch 
 		logger.FileErrorLog(err)
 	}
 
+	connectionPool := connection.NewClientConnectionPool()
 	client := connectionPool.GetServerConnection(host)
 	resp, err2 := client.Do(req)
 

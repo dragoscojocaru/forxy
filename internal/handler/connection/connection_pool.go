@@ -1,4 +1,4 @@
-package http
+package connection
 
 import "net/http"
 
@@ -22,5 +22,3 @@ func (pool ClientConnectionPool) GetServerConnection(serverHost string) *http.Cl
 	}
 	return pool.ServerHashmap[serverHost]
 }
-
-var connectionPool = NewClientConnectionPool()
