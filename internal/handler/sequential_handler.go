@@ -1,11 +1,13 @@
-package http
+package handler
 
 import (
 	"bytes"
 	"encoding/json"
-	ForxyHttpApiRequest "github.com/dragoscojocaru/forxy/pkg/handler/http/api/request"
-	"github.com/dragoscojocaru/forxy/pkg/handler/http/api/response"
-	"github.com/dragoscojocaru/forxy/pkg/logger"
+	ForxyHttpApiRequest "github.com/dragoscojocaru/forxy/internal/handler/api/request"
+	"github.com/dragoscojocaru/forxy/internal/handler/api/response"
+	"github.com/dragoscojocaru/forxy/internal/handler/connection"
+	"github.com/dragoscojocaru/forxy/internal/handler/request"
+	"github.com/dragoscojocaru/forxy/internal/logger"
 	"net/http"
 )
 
@@ -36,11 +38,12 @@ func HTTPSequentialHandler(w http.ResponseWriter, r *http.Request) {
 			req.Header.Set(key, value)
 		}
 
-		host, err := GetHost(body.Requests[idx].URL)
+		host, err := request.GetHost(body.Requests[idx].URL)
 		if err != nil {
 			logger.FileErrorLog(err)
 		}
 
+		connectionPool := connection.NewClientConnectionPool()
 		client := connectionPool.GetServerConnection(host)
 		resp, err2 := client.Do(req)
 
