@@ -38,6 +38,7 @@ func NewServerResponse(response http.Response) *ServerResponse {
 
 type ForxyResponsePayload struct {
 	Responses map[int]*ServerResponse `json:"responses"`
+	Message   string                  `json:"message"`
 }
 
 type ForxyResponsePayloadWriter struct {

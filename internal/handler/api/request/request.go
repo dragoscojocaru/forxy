@@ -1,6 +1,9 @@
 package request
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"time"
+)
 
 type RequestMessage struct {
 	URL     string
@@ -10,6 +13,6 @@ type RequestMessage struct {
 }
 
 type ForxyBodyPayload struct {
-	Timeout  int
+	Timeout  time.Duration
 	Requests map[int]RequestMessage
 }

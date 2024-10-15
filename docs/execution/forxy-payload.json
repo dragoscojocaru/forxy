@@ -1,5 +1,5 @@
 {
-    "timeout": 400,
+    "timeout": 200,
     "requests":
     {
         "1":{

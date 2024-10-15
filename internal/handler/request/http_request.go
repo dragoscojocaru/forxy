@@ -47,7 +47,7 @@ func HTTPRequest(idx int, requestMessage ForxyHttpApiRequest.RequestMessage, ch 
 	*ch <- *chanResp
 }
 
-func SendStream(ch *chan response.ChannelMessage, body ForxyHttpApiRequest.ForxyBodyPayload) {
+func SendStream(ch *chan response.ChannelMessage, body ForxyHttpApiRequest.ForxyBodyPayload, ech *chan bool) {
 	var wg sync.WaitGroup
 
 	for idx := range body.Requests {
@@ -55,6 +55,7 @@ func SendStream(ch *chan response.ChannelMessage, body ForxyHttpApiRequest.Forxy
 		go HTTPRequest(idx, body.Requests[idx], ch, &wg)
 	}
 	wg.Wait()
+	*ech <- true
 }
 
 func GetHost(link string) (string, error) {
